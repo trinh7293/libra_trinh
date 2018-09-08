@@ -8,6 +8,9 @@ django = "==2.1.1"
 djongo = "*"
 celery = "*"
 pika = "*"
+requests = "*"
+"pep8" = "*"
+pycodestyle = "*"
 
 [dev-packages]
 
