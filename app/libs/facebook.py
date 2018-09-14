@@ -9,8 +9,9 @@ READ_TIMEOUT = 9999
 
 class FacebookClient():
 
-    def __init__(self, access_token):
+    def __init__(self, access_token, version):
         self.access_token = access_token
+        self.version = version
 
     def _check_result(self, result):
         """
@@ -40,7 +41,7 @@ class FacebookClient():
             raise FacebookApiException(msg, result)
         return result_json
 
-    def _make_request(self, version, node_id, field, access_token,
+    def _make_request(self, node_id, field, access_token,
                       params=None, base_url=API_URL):
         connect_timeout = CONNECT_TIMEOUT
         read_timeout = READ_TIMEOUT
@@ -50,15 +51,16 @@ class FacebookClient():
             if 'timeout' in params:
                 read_timeout = params['timeout'] + 10
         request_url = base_url.format(
-            version, node_id, field, access_token)
+            self.version, node_id, field, access_token)
+        print('request_url: ', request_url)
         result = requests.get(request_url, timeout=(
             connect_timeout, read_timeout))
-        return self._check_result(result)['data']
+        result_checked = self._check_result(result)
+        return result_checked
 
-    def gen_posts(self, node_id):
-        version = 'v1.0'
+    def fetch_obj(self, node_id, field=''):
         response = self._make_request(
-            version, node_id, 'posts', self.access_token)
+            node_id, field, self.access_token)
         return response
 
 
@@ -76,18 +78,3 @@ class FacebookApiException(Exception):
             "A request to the FacebookClient API was"
             "unsuccessful. {0}".format(msg))
         self.result = result
-
-
-if __name__ == '__main__':
-    valid_access_token = 'EAAAAUaZA8jlABAMhIgavkNdr984f3HhzP9M4xCrvwivBGqGnt'\
-        'ER7rYGQjStSPo9foYMuMkhMGN6ZC5wKZB9xFaJex7x0d5vaFF0tyg72jut3C0z'\
-        'dPPxuCEyUXiYPVzIb0ybfC3kFv6F8xQzSYjS14RXYFUyyp8ZD'
-    # invalid_access_token = 'EAACYqFZAXAzABAEbjgdEmnYgR0hiVlPv'\
-    #     'XGCFNhvS6qVnZBxmx6b3ZBvcVGqZBWLkvsaxJCGTnXPPlg78XwdH3BSNDE9o4'\
-    #     'xtl9ZCTT6cZATSmT057IXc4EfcypGRY1TL8Kpvlod4RvOo81lUVCFxt4KbD13qG'\
-    #     'nWo464JERHVO6xTW2TqFtlTVF8UEJbNsVtPWIDUtnQiLZAhcgZDZD'
-    page_id = '1007443141'
-    obj = FacebookClient(valid_access_token)
-    # obj = FacebookClient(invalid_access_token)
-    res = obj.gen_posts(page_id)
-    print(res)

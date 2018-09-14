@@ -122,11 +122,15 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+RABBITMQ_URL = 'amqp://libra:zK4LZNRw@192.168.1.88:5672/libra'
+ACCESS_TOKEN_QUEUE = 'access_token_queue'
+ACCESS_TOKEN_ERROR_QUEUE = 'access_token_error_queue'
 CELERY_BROKER_URL = 'amqp://libra:zK4LZNRw@192.168.1.88:5672/libra'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
+VERSION_1_0 = 'v1.0'
 
 
 # Static files (CSS, JavaScript, Images)
