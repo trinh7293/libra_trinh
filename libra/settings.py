@@ -130,7 +130,7 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
-VERSION_1_0 = 'v1.0'
+FACEBOOK_CLIENT_VERSION_1_0 = 'v1.0'
 
 
 # Static files (CSS, JavaScript, Images)

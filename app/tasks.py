@@ -5,6 +5,24 @@ from libra.celery import app
 from app.libs.facebook import FacebookClient
 from django.conf import settings
 
+def modify_to_posts_structure(posts):
+    if posts is None:
+        return posts
+    posts_list_modified = []
+    for post in posts:
+        post_mod = {}
+        post_mod['post_id'] = post.get('id')
+        post_mod['image_link'] = post.get('picture')
+        post_mod['video_link'] = post.get('source')
+        post_mod['post_link'] = post.get('link')
+        post_mod['content'] = post.get('message', '') + '\n' + post.get('description', '')
+        post_mod['page_id'] = post['from']['id']
+        post_mod['created_time'] = post.get('created_time')
+        post_mod['category'] = post['from']['category']
+        posts_list_modified.append(post_mod)
+    return posts_list_modified
+        
+
 
 @app.task(bind=True)
 def query_page(self, page_id):
@@ -28,7 +46,7 @@ def query_page(self, page_id):
         access_token_from_queue = body.decode("utf-8")
         try:  # check access token
             client_check = FacebookClient(
-                access_token_from_queue, settings.VERSION_1_0)
+                access_token_from_queue, settings.FACEBOOK_CLIENT_VERSION_1_0)
             client_check.fetch_obj(page_id)
             access_token = access_token_from_queue
             channel.basic_ack(method_frame.delivery_tag)
@@ -47,6 +65,6 @@ def query_page(self, page_id):
         time.sleep(0.01)
     posts = None
     if access_token is not None:
-        client = FacebookClient(access_token, settings.VERSION_1_0)
+        client = FacebookClient(access_token, settings.FACEBOOK_CLIENT_VERSION_1_0)
         posts = client.fetch_obj(page_id, 'posts')['data']
-    return posts
+    return modify_to_posts_structure(posts)
