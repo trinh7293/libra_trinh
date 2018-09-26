@@ -11,6 +11,9 @@ pika = "*"
 requests = "*"
 "pep8" = "*"
 pycodestyle = "*"
+djangorestframework = "*"
+markdown = "*"
+django-filter = "*"
 
 [dev-packages]
 pylint = "*"
